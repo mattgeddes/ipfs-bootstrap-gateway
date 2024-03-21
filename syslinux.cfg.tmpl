@@ -1,0 +1,4 @@
+default ipfs-fos
+  label ipfs-fos
+  kernel /ipfs/{{ .Boot.KernelCID }}
+  append initrd=/ipfs/{{ .Boot.InitrdCID }} vga=795 nocloud=http://{{ .Global.HTTPListenAddr }}/nocloud.cfg
