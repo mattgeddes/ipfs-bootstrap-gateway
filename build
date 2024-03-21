@@ -1,0 +1,27 @@
+#!/bin/bash
+
+NAME="ipfs-bootstrap-gateway"
+PLATFORMS="linux-amd64 linux-arm linux-arm64 openbsd-arm64 freebsd-amd64"
+
+die(){
+    echo "ERROR: $*" 1>&2
+    exit 1
+}
+
+echo "Formatting code";	go fmt ./... || die "Failed to format"
+
+echo "Linting code";	golint ./... || die "Failed to lint"
+
+echo "Vetting code";	go vet ./... || die "Failed to vet"
+
+echo "Testing code";	go test ./... || die "Test suite failed"
+
+mkdir -p targets
+
+for platform in $PLATFORMS
+do
+    os=$(echo $platform | cut -f 1 -d -)
+    arch=$(echo $platform | cut -f 2 -d -)
+    echo "Building code for $os on $arch"
+    env GOOS=$os GOARCH=$arch go build -o targets/${NAME}-$platform
+done
